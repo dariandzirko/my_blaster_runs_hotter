@@ -24,12 +24,12 @@ fn setup(mut cmds: Commands) {
         cmds.spawn(SpriteBundle {
             transform: Transform::from_translation(Vec3::new(
                 0.,
-                (i as f32 - MAP_SIZE as f32) * GRID_LENGTH,
+                (i as f32 - (MAP_SIZE / 2) as f32) * GRID_LENGTH,
                 0.,
             )),
             sprite: Sprite {
                 color: Color::rgb(0.27, 0.27, 0.27),
-                custom_size: Some(Vec2::new(GRID_LENGTH, GRID_THICKNESS)),
+                custom_size: Some(Vec2::new(GRID_LENGTH * MAP_SIZE as f32, GRID_THICKNESS)),
                 ..default()
             },
             ..default()
@@ -39,13 +39,13 @@ fn setup(mut cmds: Commands) {
     for i in 0..=MAP_SIZE {
         cmds.spawn(SpriteBundle {
             transform: Transform::from_translation(Vec3::new(
-                (i as f32 - MAP_SIZE as f32) * GRID_LENGTH,
+                (i as f32 - (MAP_SIZE / 2) as f32) * GRID_LENGTH,
                 0.,
                 0.,
             )),
             sprite: Sprite {
                 color: Color::rgb(0.27, 0.27, 0.27),
-                custom_size: Some(Vec2::new(GRID_THICKNESS, GRID_LENGTH)),
+                custom_size: Some(Vec2::new(GRID_THICKNESS, GRID_LENGTH * MAP_SIZE as f32)),
                 ..default()
             },
             ..default()
