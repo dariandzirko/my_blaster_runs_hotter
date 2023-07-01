@@ -5,3 +5,5 @@ pub const PLAYER_SPEED: f32 = 300.0;
 pub const MAP_SIZE: u32 = 50;
 pub const GRID_LENGTH: f32 = 50.0;
 pub const GRID_THICKNESS: f32 = 10.0;
+// Projectile constants
+pub const BASE_GUN_SPEED: f32 = 400.0;

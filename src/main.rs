@@ -6,6 +6,7 @@ use bevy_rapier2d::prelude::*;
 use constants::{GRID_LENGTH, GRID_THICKNESS, MAP_SIZE};
 use player::PlayerPlugin;
 use player_weapon::PlayerWeaponPlugin;
+use projectile::ProjectilePlugin;
 
 mod animation;
 mod components;
@@ -13,6 +14,7 @@ mod constants;
 mod entity_states;
 mod player;
 mod player_weapon;
+mod projectile;
 
 use crate::animation::AnimationPlugin;
 
@@ -24,6 +26,7 @@ fn main() {
         .add_plugin(PlayerPlugin)
         .add_plugin(AnimationPlugin)
         .add_plugin(PlayerWeaponPlugin)
+        .add_plugin(ProjectilePlugin)
         .add_system(hide_cursor)
         .run();
 }

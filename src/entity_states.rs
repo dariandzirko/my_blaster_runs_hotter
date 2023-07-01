@@ -24,6 +24,7 @@ pub enum PlayerState {
 #[derive(Component)]
 pub struct PlayerAnimationInfo {
     pub state: PlayerState,
+    pub is_flip: bool,
 }
 
 impl SpriteLocation for PlayerAnimationInfo {
@@ -36,33 +37,28 @@ impl SpriteLocation for PlayerAnimationInfo {
             _ => (0, 0),
         }
     }
-}
-
-pub enum EnemyState {
-    Death,
-    Run,
-    Idle,
-    Attack,
-}
-
-#[derive(Component)]
-pub struct EnemyAnimationInfo {
-    pub state: EnemyState,
-    pub is_flip: bool,
-}
-
-impl SpriteLocation for EnemyAnimationInfo {
-    fn location(&self) -> (usize, usize) {
-        match &self.state {
-            EnemyState::Death => (0 * 8, 8),
-            EnemyState::Run => (1 * 8, 6),
-            EnemyState::Idle => (4 * 8, 5),
-            EnemyState::Attack => (4 * 8, 5),
-            _ => (0, 0),
-        }
-    }
 
     fn is_flip(&self) -> bool {
         return self.is_flip;
+    }
+}
+
+pub enum SlimeState {
+    Death,
+    Run,
+}
+
+#[derive(Component)]
+pub struct SlimeAnimationInfo {
+    pub state: SlimeState,
+}
+
+impl SpriteLocation for SlimeAnimationInfo {
+    fn location(&self) -> (usize, usize) {
+        match &self.state {
+            SlimeState::Death => (0 * 8, 13),
+            SlimeState::Run => (1 * 8, 6),
+            _ => (0, 0),
+        }
     }
 }

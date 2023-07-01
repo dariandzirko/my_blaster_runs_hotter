@@ -19,11 +19,16 @@ fn player_spawn_weapon_system(
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
 ) {
     let texture_handle = asset_server.load("main_char/Gun/Main Gun/main gun_Gun_0.png");
-    let texture_atlas =
-        TextureAtlas::from_grid(texture_handle, Vec2::new(50.0, 50.0), 1, 1, None, None);
+    let texture_atlas = TextureAtlas::from_grid(
+        texture_handle,
+        Vec2::new(50.0, 50.0),
+        1,
+        1,
+        None,
+        Some(Vec2::new(-10.0, -5.0)),
+    );
     let texture_atlas_handle = texture_atlases.add(texture_atlas);
 
-    // Add the player sprite
     let sprite = SpriteSheetBundle {
         texture_atlas: texture_atlas_handle,
         transform: Transform::from_scale(Vec3::splat(PLAYER_SPRITE_SCALE)),

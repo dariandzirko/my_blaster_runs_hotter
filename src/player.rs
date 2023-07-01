@@ -1,14 +1,13 @@
 use bevy::prelude::*;
-use bevy::window;
 use bevy::window::PrimaryWindow;
 use bevy_rapier2d::dynamics::*;
-use bevy_rapier2d::parry::transformation::utils::transform;
 use bevy_rapier2d::prelude::*;
 use nalgebra::{vector, Vector2};
 
 use crate::components::*;
 use crate::constants::*;
-use crate::entity_states::{PlayerAnimationInfo, PlayerState}; //Should probably fix this, it's a little lazy
+use crate::entity_states::{PlayerAnimationInfo, PlayerState};
+use crate::projectile::SpawnProjectileEvent; //Should probably fix this, it's a little lazy
 
 pub struct PlayerPlugin;
 
@@ -21,6 +20,7 @@ impl Plugin for PlayerPlugin {
                 camera_follow_system,
                 mouse_input_system,
                 crosshair_follow_system,
+                player_animation_state_system,
             ));
     }
 }
@@ -57,16 +57,23 @@ fn player_spawn_system(
         .insert(Player {
             move_dir: Vec2::ZERO,
             weapon_dir: Vec2::ZERO,
+            is_invincible: false,
         })
         .insert(PlayerAnimationInfo {
             state: PlayerState::Idle,
+            is_flip: false,
         })
         .insert(AnimationTimer(Timer::from_seconds(
             0.1,
             TimerMode::Repeating,
-        )));
+        )))
+        // .with_children( |parent| {
+        //     parent.spawn()
+        // })
+        ;
 }
 
+// I might want to break states out but for now this should be okay
 fn keyboard_input_system(keyboard_input: Res<Input<KeyCode>>, mut players: Query<&mut Player>) {
     let mut move_dir = Vec2::new(0.0, 0.0);
 
@@ -88,9 +95,32 @@ fn keyboard_input_system(keyboard_input: Res<Input<KeyCode>>, mut players: Query
         move_dir.x = 0.0;
     }
 
+    if keyboard_input.pressed(KeyCode::LControl) {
+        // send a roll event
+
+        // I should just send a roll event with this player, so I can add more speed and I frames to the player
+    }
+
     // This will not work for multiplayer, need a player_handle input to distinguish between players, maybe break this out
     for mut player in players.iter_mut() {
         player.move_dir = move_dir;
+    }
+}
+
+fn player_animation_state_system(mut players: Query<(&Player, &mut PlayerAnimationInfo)>) {
+    if let Ok((player, mut player_animation_info)) = players.get_single_mut() {
+        if player.move_dir == Vec2::ZERO {
+            player_animation_info.state = PlayerState::Idle;
+        } else {
+            player_animation_info.state = PlayerState::Run;
+        }
+
+        //I am not sure this would work with my current idea of the roll animation
+        if player.weapon_dir.x < 0.0 {
+            player_animation_info.is_flip = true;
+        } else {
+            player_animation_info.is_flip = false;
+        }
     }
 }
 
@@ -110,6 +140,8 @@ fn player_move_system(mut players: Query<(&mut Velocity, &mut Transform, &Player
 fn mouse_input_system(
     window_query: Query<&Window, With<PrimaryWindow>>,
     mut player_pos_query: Query<(&Transform, &mut Player)>,
+    mut spawn_projectile_events: EventWriter<SpawnProjectileEvent>,
+    mouse_buttons: Res<Input<MouseButton>>,
 ) {
     for (player_tf, mut player) in player_pos_query.iter_mut() {
         if let Ok(window) = window_query.get_single() {
@@ -119,6 +151,13 @@ fn mouse_input_system(
                     cursor_pos.y - window.height() / 2.0 - player_tf.translation.y,
                 )
                 .normalize();
+            }
+            if mouse_buttons.just_pressed(MouseButton::Left) {
+                spawn_projectile_events.send(SpawnProjectileEvent {
+                    position: player_tf.translation,
+                    direction: player.weapon_dir,
+                    collision_group: 1,
+                })
             }
         }
     }

@@ -12,6 +12,7 @@ pub struct Crosshair {
 pub struct Player {
     pub move_dir: Vec2,
     pub weapon_dir: Vec2,
+    pub is_invincible: bool,
 }
 
 #[derive(Component)]
