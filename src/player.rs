@@ -34,14 +34,41 @@ fn player_spawn_system(
     rapier_config.gravity = Vec2::ZERO;
 
     let texture_handle = asset_server.load("main_char/main_char_sprite_sheet.png");
-    let texture_atlas =
-        TextureAtlas::from_grid(texture_handle, Vec2::new(50.0, 50.0), 8, 3, None, None);
+    let texture_atlas = TextureAtlas::from_grid(
+        texture_handle,
+        Vec2::new(50.0, 50.0),
+        8,
+        3,
+        None,
+        Some(Vec2::new(0.0, 0.0)),
+    );
     let texture_atlas_handle = texture_atlases.add(texture_atlas);
 
     // Add the player sprite
     let sprite = SpriteSheetBundle {
         texture_atlas: texture_atlas_handle,
         transform: Transform::from_scale(Vec3::splat(PLAYER_SPRITE_SCALE)),
+        ..default()
+    };
+
+    let texture_handle = asset_server.load("main_char/Gun/Main Gun/main gun_Gun_0.png");
+    let texture_atlas = TextureAtlas::from_grid(
+        texture_handle,
+        Vec2::new(50.0, 50.0),
+        1,
+        1,
+        None,
+        Some(Vec2::new(0.0, 0.0)),
+    );
+    let texture_atlas_handle = texture_atlases.add(texture_atlas);
+
+    let weapon_sprite = SpriteSheetBundle {
+        texture_atlas: texture_atlas_handle,
+        transform: Transform::from_translation(Vec3 {
+            x: 0.0,
+            y: 0.0,
+            z: 1.0,
+        }),
         ..default()
     };
 
@@ -67,10 +94,14 @@ fn player_spawn_system(
             0.1,
             TimerMode::Repeating,
         )))
-        // .with_children( |parent| {
-        //     parent.spawn()
-        // })
-        ;
+        .with_children(|parent| {
+            parent
+                .spawn(weapon_sprite)
+                .insert(WeaponData::default())
+                .insert(PlayerWeapon {
+                    is_player_weapon: true,
+                });
+        });
 }
 
 // I might want to break states out but for now this should be okay

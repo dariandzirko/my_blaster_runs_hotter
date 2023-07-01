@@ -41,7 +41,7 @@ pub fn spawn_projectile(
         1,
         1,
         None,
-        Some(Vec2::new(0.0, -5.0)),
+        Some(Vec2::new(0.0, 0.0)),
     );
     let texture_atlas_handle = texture_atlases.add(texture_atlas);
 
@@ -53,7 +53,11 @@ pub fn spawn_projectile(
     let transform = Transform::default()
         .with_rotation(Quat::from_rotation_z(angle))
         .with_scale(Vec3::splat(PLAYER_SPRITE_SCALE))
-        .with_translation(projectile_info.position);
+        .with_translation(Vec3 {
+            x: projectile_info.position.x,
+            y: projectile_info.position.y,
+            z: 0.0,
+        });
 
     // Add the player sprite
     let sprite = SpriteSheetBundle {

@@ -8,8 +8,11 @@ pub struct PlayerWeaponPlugin;
 
 impl Plugin for PlayerWeaponPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(player_spawn_weapon_system)
-            .add_systems((weapon_follow_crosshair_system, weapon_attach_player_system));
+        app
+            // .add_startup_system(player_spawn_weapon_system)
+            .add_system(weapon_follow_crosshair_system)
+            // .add_system(weapon_attach_player_system)
+            ;
     }
 }
 

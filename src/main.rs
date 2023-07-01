@@ -28,6 +28,7 @@ fn main() {
         .add_plugin(PlayerWeaponPlugin)
         .add_plugin(ProjectilePlugin)
         .add_system(hide_cursor)
+        .add_system(bevy::window::close_on_esc)
         .run();
 }
 
