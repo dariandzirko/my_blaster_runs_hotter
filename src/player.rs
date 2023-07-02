@@ -40,7 +40,7 @@ fn player_spawn_system(
         8,
         3,
         None,
-        Some(Vec2::new(0.0, 0.0)),
+        Some(Vec2::new(0.0, 3.0)),
     );
     let texture_atlas_handle = texture_atlases.add(texture_atlas);
 
@@ -58,7 +58,7 @@ fn player_spawn_system(
         1,
         1,
         None,
-        Some(Vec2::new(0.0, 0.0)),
+        Some(Vec2::new(-7.0, 0.0)),
     );
     let texture_atlas_handle = texture_atlases.add(texture_atlas);
 
