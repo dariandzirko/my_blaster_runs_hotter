@@ -11,7 +11,7 @@ pub struct AnimationPlugin;
 impl Plugin for AnimationPlugin {
     fn build(&self, app: &mut App) {
         app.add_system(animation_system::<PlayerAnimationInfo>);
-        // app.add_system(animation_system::<SlimeAnimationInfo>);
+        app.add_system(animation_system::<SlimeAnimationInfo>);
     }
 }
 

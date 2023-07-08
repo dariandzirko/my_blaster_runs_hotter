@@ -10,6 +10,7 @@ use player::PlayerPlugin;
 use player_weapon::PlayerWeaponPlugin;
 use projectile::ProjectilePlugin;
 use slime::SlimePlugin;
+use spawn_manager::SpawnManagerPlugin;
 
 mod animation;
 mod components;
@@ -19,6 +20,7 @@ mod player;
 mod player_weapon;
 mod projectile;
 mod slime;
+mod spawn_manager;
 
 use crate::animation::AnimationPlugin;
 
@@ -34,6 +36,7 @@ fn main() {
         .add_plugin(PlayerWeaponPlugin)
         .add_plugin(ProjectilePlugin)
         .add_plugin(SlimePlugin)
+        .add_plugin(SpawnManagerPlugin)
         .add_system(hide_cursor)
         .add_system(bevy::window::close_on_esc)
         .run();

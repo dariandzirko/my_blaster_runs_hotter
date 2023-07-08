@@ -17,3 +17,4 @@ pub const DEFAULT_BULLET_HEIGHT: f32 = 2.5;
 // Slime Constants
 pub const SLIME_WIDTH: f32 = 5.0;
 pub const SLIME_HEIGHT: f32 = 5.0;
+pub const SLIME_SPEED: f32 = 100.0;

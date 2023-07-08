@@ -2,8 +2,10 @@ use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
 use crate::{
-    components::{Player, Slime},
-    constants::{PLAYER_SPRITE_SCALE, SLIME_HEIGHT, SLIME_WIDTH},
+    components::{AnimationTimer, Player, Slime},
+    constants::{
+        PLAYER_ANIMATION_TIMER, PLAYER_SPRITE_SCALE, SLIME_HEIGHT, SLIME_SPEED, SLIME_WIDTH,
+    },
     entity_states::{SlimeAnimationInfo, SlimeState},
 };
 
@@ -13,7 +15,7 @@ impl Plugin for SlimePlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<SpawnSlimeEvent>()
             .add_system(slime_movement_system)
-            .add_system(slime_animation_system)
+            //.add_system(slime_animation_system)
             .add_system(spawn_slime_system);
     }
 }
@@ -48,9 +50,12 @@ pub fn spawn_slime(
     // Add the player sprite
     let sprite = SpriteSheetBundle {
         texture_atlas: texture_atlas_handle,
-        transform: Transform::from_scale(Vec3::splat(PLAYER_SPRITE_SCALE)),
         ..default()
     };
+
+    let transform = Transform::default()
+        .with_scale(Vec3::splat(PLAYER_SPRITE_SCALE))
+        .with_translation(slime_info.position);
 
     cmd.spawn(sprite)
         .insert(Collider::cuboid(SLIME_WIDTH, SLIME_HEIGHT))
@@ -62,31 +67,36 @@ pub fn spawn_slime(
             impulse: Vec2::new(0.0, 0.0),
             torque_impulse: 0.0,
         })
-        .insert(Transform::from_translation(slime_info.position))
+        .insert(transform)
         .insert(Slime {
             move_dir: Vec2::ZERO,
         })
         .insert(SlimeAnimationInfo {
             state: SlimeState::Run,
-        });
+        })
+        .insert(AnimationTimer(Timer::from_seconds(
+            PLAYER_ANIMATION_TIMER,
+            TimerMode::Repeating,
+        )));
 }
 
 pub fn slime_movement_system(
     player: Query<&Transform, With<Player>>,
-    mut slimes: Query<(&Transform, &mut Slime)>,
+    mut slimes: Query<(&Transform, &mut Slime, &mut Velocity)>,
 ) {
     if let Ok(player_transform) = player.get_single() {
-        for (slime_transform, mut slime) in slimes.iter_mut() {
+        for (slime_transform, mut slime, mut slime_velocity) in slimes.iter_mut() {
             slime.move_dir = Vec2::new(
                 player_transform.translation.x - slime_transform.translation.x,
                 player_transform.translation.y - slime_transform.translation.y,
             );
+            slime_velocity.linvel = slime.move_dir.normalize() * SLIME_SPEED;
         }
     }
 }
 
 pub fn slime_animation_system(mut slimes: Query<&mut SlimeAnimationInfo, With<Slime>>) {
-    for (mut slime_animation_info) in slimes.iter_mut() {
+    for mut slime_animation_info in slimes.iter_mut() {
         slime_animation_info.state = SlimeState::Run;
     }
 }

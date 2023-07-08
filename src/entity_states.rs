@@ -56,8 +56,8 @@ pub struct SlimeAnimationInfo {
 impl SpriteLocation for SlimeAnimationInfo {
     fn location(&self) -> (usize, usize) {
         match &self.state {
-            SlimeState::Death => (0 * 8, 13),
-            SlimeState::Run => (1 * 8, 6),
+            SlimeState::Death => (0 * 13, 13),
+            SlimeState::Run => (1 * 13, 6),
             _ => (0, 0),
         }
     }
