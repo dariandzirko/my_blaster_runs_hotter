@@ -41,7 +41,7 @@ pub fn spawn_projectile(
         1,
         1,
         None,
-        Some(Vec2::new(0.0, 0.0)),
+        Some(Vec2::new(0.0, -5.0)),
     );
     let texture_atlas_handle = texture_atlases.add(texture_atlas);
 
@@ -62,17 +62,23 @@ pub fn spawn_projectile(
     // Add the player sprite
     let sprite = SpriteSheetBundle {
         texture_atlas: texture_atlas_handle,
-        transform,
         ..default()
     };
 
     cmd.spawn(sprite)
+        .insert(Collider::cuboid(
+            DEFAULT_BULLET_WIDTH,
+            DEFAULT_BULLET_HEIGHT,
+        ))
+        .insert(CollisionGroups::new(Group::GROUP_1, Group::GROUP_1))
+        .insert(Dominance::group(-1))
         //Rigid Body
-        .insert(RigidBody::Dynamic)
+        .insert(RigidBody::KinematicVelocityBased)
         .insert(LockedAxes::ROTATION_LOCKED)
         .insert(Velocity::linear(projectile_info.direction * BASE_GUN_SPEED))
         .insert(ExternalImpulse {
             impulse: Vec2::new(0.0, 0.0),
             torque_impulse: 0.0,
-        });
+        })
+        .insert(transform);
 }

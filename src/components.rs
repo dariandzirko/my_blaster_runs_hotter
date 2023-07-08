@@ -13,11 +13,17 @@ pub struct Player {
     pub move_dir: Vec2,
     pub weapon_dir: Vec2,
     pub is_invincible: bool,
+    pub roll_timer: Timer,
 }
 
 #[derive(Component)]
 pub struct PlayerWeapon {
     pub is_player_weapon: bool,
+}
+
+#[derive(Component)]
+pub struct Slime {
+    pub move_dir: Vec2,
 }
 
 #[derive(Component)]

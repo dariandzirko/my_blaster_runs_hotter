@@ -13,15 +13,14 @@ pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_systems((player_spawn_system, spawn_crosshair_system))
-            .add_systems((
-                keyboard_input_system,
-                player_move_system,
-                camera_follow_system,
-                mouse_input_system,
-                crosshair_follow_system,
-                player_animation_state_system,
-            ));
+        app.add_startup_system((player_spawn_system)).add_systems((
+            keyboard_input_system,
+            player_move_system,
+            camera_follow_system,
+            mouse_input_system,
+            //crosshair_follow_system,
+            player_animation_state_system,
+        ));
     }
 }
 
@@ -73,6 +72,9 @@ fn player_spawn_system(
     };
 
     cmds.spawn(sprite)
+        //Collider
+        .insert(Collider::cuboid(PLAYER_WIDTH, PLAYER_HEIGHT))
+        .insert(CollisionGroups::new(Group::GROUP_2, Group::GROUP_2))
         //Rigid Body
         .insert(RigidBody::Dynamic)
         .insert(LockedAxes::ROTATION_LOCKED)
@@ -85,13 +87,17 @@ fn player_spawn_system(
             move_dir: Vec2::ZERO,
             weapon_dir: Vec2::ZERO,
             is_invincible: false,
+            roll_timer: Timer::from_seconds(
+                PLAYER_ANIMATION_TIMER * ROLL_FRAMES,
+                TimerMode::Repeating,
+            ),
         })
         .insert(PlayerAnimationInfo {
             state: PlayerState::Idle,
             is_flip: false,
         })
         .insert(AnimationTimer(Timer::from_seconds(
-            0.1,
+            PLAYER_ANIMATION_TIMER,
             TimerMode::Repeating,
         )))
         .with_children(|parent| {
@@ -183,6 +189,7 @@ fn mouse_input_system(
                 )
                 .normalize();
             }
+
             if mouse_buttons.just_pressed(MouseButton::Left) {
                 spawn_projectile_events.send(SpawnProjectileEvent {
                     position: player_tf.translation,
@@ -193,6 +200,10 @@ fn mouse_input_system(
         }
     }
 }
+
+// If the rolling. Lock direction and speed (make roll speed faster than run speed) until the animation is done.
+// Total Time = number of roll frames * animation timer setting
+fn player_roll_system() {}
 
 // Can even make this a resource and add this to some ui stuff. So I can select the menus with a fun little crosshair
 fn spawn_crosshair_system(
